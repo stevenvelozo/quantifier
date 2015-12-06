@@ -16,140 +16,123 @@ var Quantifier = function()
 	{
 		var _Settings = libUnderscore.extend({}, pSettings, require('./Quantifier-DefaultSettings.js'));
 
-		var _Values = [];
+		// The bins in the set
+		var _Bins = [];
 
+		// The statistics about this set
 		var _Statistics = (
 		{
-			// The total number of bins that have been touched
+			// The actual minimum and maximum for the set of bins
+			Minimum: false,
+			Maximum: false,
+			// The size (length) of the set
+			Size: false,
+
+			// The total number of bins that have been touched (note that bins with value 0 are counted but null are not)
 			Entries: false,
 
-			// The total amount of the set of all values
+			// The sum of all bins values 
 			SetTotal: false,
 
 			// The total number of push operations which have been made to the set
 			PushOperations: 0,
+			// The number of push operations when the statistics were last generated (for cache validation)
+			PushOperationsAtStatisticsGeneration: -1,
 
-			// The actual minimum and maximum for the set
-			Minimum: false,
-			Maximum: false,
-
-			// The smallest and largest buckets.  (note that 0 bukcets are counted but null are not)
-			BucketMinimum: false,
-			BucketMaximum: false
+			// The smallest and largest bin values. (note that null is not counted as 0)
+			BinMinimum: false,
+			BinMaximum: false
 		});
 
-		// Add to a Value in the set
-		var addValue = function(pValue, pValueAmount)
+		// An empty object to cache report code in.
+		// This allows the system to lazily load necessary reports, and consumers to add to/override default report behavior.
+		var _Reports = {};
+
+		// A set of consistent functions and tools for rendering to the console
+		var _RenderingTools = false;
+
+
+		// Add to a Bin in the set
+		var addBin = function(pBin, pBinAmount)
 		{
-			var tmpValueAmount = (typeof(pValueAmount) === 'number') ? pValueAmount : 1;
+			var tmpBinAmount = (typeof(pBinAmount) === 'number') ? pBinAmount : 1;
 
-			if (_Values[pValue] == null)
+			if (_Bins[pBin] == null)
 			{
-				_Values[pValue] = 0;
+				_Bins[pBin] = 0;
 			}
 
-			if (!_Statistics.Minimum || (pValue < _Statistics.Minimum))
+			if (!_Statistics.Minimum || (pBin < _Statistics.Minimum))
 			{
-				_Statistics.Minimum = pValue;
+				_Statistics.Minimum = pBin;
 			}
-			if (!_Statistics.Maximum || (pValue > _Statistics.Maximum))
+			if (!_Statistics.Maximum || (pBin > _Statistics.Maximum))
 			{
-				_Statistics.Maximum = pValue;
+				_Statistics.Maximum = pBin;
 			}
 
 			_Statistics.PushOperations++;
-			_Values[pValue] += tmpValueAmount;
+			_Bins[pBin] += tmpBinAmount;
 
 			return tmpNewQuantifierObject;
 		}
 
+
+		// Generates statistics about the entire set
 		var generateStatistics = function()
 		{
+			if (_Statistics.PushOperationsAtStatisticsGeneration >= _Statistics.PushOperations)
+			{
+				// The statistics cache is still valid, so keep using it.
+				return tmpNewQuantifierObject;
+			}
+
 			_Statistics.SetTotal = 0;
 			_Statistics.Entries = 0;
 
 			for (var i = _Statistics.Minimum; i < _Statistics.Maximum; i++)
 			{
-				if (_Values[i] == null)
+				if (_Bins[i] == null)
 					continue;
 
-				if (!_Statistics.BucketMinimum || (_Values[i] < _Statistics.BucketMinimum))
+				if (!_Statistics.BinMinimum || (_Bins[i] < _Statistics.BinMinimum))
 				{
-					_Statistics.BucketMinimum = _Values[i];
+					_Statistics.BinMinimum = _Bins[i];
 				}
-				if (!_Statistics.BucketMaximum || (_Values[i] > _Statistics.BucketMaximum))
+				if (!_Statistics.BinMaximum || (_Bins[i] > _Statistics.BinMaximum))
 				{
-					_Statistics.BucketMaximum = _Values[i];
+					_Statistics.BinMaximum = _Bins[i];
 				}
 
 				_Statistics.Entries++;
-				_Statistics.SetTotal += _Values[i];
+				_Statistics.SetTotal += _Bins[i];
 
 			}
 			// First, reset the statistics.
 			return tmpNewQuantifierObject;
-		}
-
-		var _BarGraphicCache = '';
-		var generateBar = function(pValue, pAmount, pMax, pWidth)
-		{
-			if (pAmount == 0)
-				return tmpBar = ('       '+pValue).slice(-6)+' |';
-
-			return tmpBar = ('       '+pValue).slice(-6)+' |'+_BarGraphicCache.slice(-pAmount)+' <<--'+pAmount;
-		};
-		var renderConsoleHorizontalBar = function()
-		{
-			var tmpStream = process.stderr;
-
-			var tmpWidth = 80;
-			/*
-			if (tmpStream.columns < _Statistics.BucketMaximum)
-			{
-				// Gone are the days
-				tmpWidth = tmpStream.columns;
-			}
-			*/
-
-			_BarGraphicCache = "#".repeat(tmpWidth);
-
-			console.log(_Settings.Title);
-			console.log('------------------------------')
-			console.log('');
-			console.log(' Histogram '+_Settings.Hash);
-			console.log('');
-			console.log(_Settings.Description);
-			console.log('');
-
-			for (var i = _Statistics.Minimum; i <= _Statistics.Maximum; i++)
-			{
-				var tmpAmount = 0;
-				if (_Values[i] == null)
-					console.log(generateBar(i, 0, _Statistics.BucketMaximum, tmpWidth));
-				else
-					console.log(generateBar(i, _Values[i], _Statistics.BucketMaximum, tmpWidth));
-			}
 		};
 
-		/**
-		* Container Object for our Factory Pattern
-		*/
+
+		// Container Object for our Factory Pattern
 		var tmpNewQuantifierObject = (
 		{
-			addValue: addValue,
+			addBin: addBin,
 
 			generateStatistics: generateStatistics,
-
-			renderConsoleHorizontalBar: renderConsoleHorizontalBar,
 
 			new: createNew
 		});
 
 		Object.defineProperty(tmpNewQuantifierObject, 'settings', { get: function() { return _Settings; } });
-		Object.defineProperty(tmpNewQuantifierObject, 'values', { get: function() { return _Values; } });
+		Object.defineProperty(tmpNewQuantifierObject, 'bins', { get: function() { return _Bins; } });
 		Object.defineProperty(tmpNewQuantifierObject, 'statistics', { get: function() { return _Statistics; } });
 
+		Object.defineProperty(tmpNewQuantifierObject, 'reports', { get: function() { return _Reports; } });
 
+		// Initialize the console rendering tools
+		_RenderingTools = require(__dirname+'/Quantifier-RenderTools.js').New(tmpNewQuantifierObject)
+		Object.defineProperty(tmpNewQuantifierObject, 'renderingTools', { get: function() { return _RenderingTools; } });
+		Object.defineProperty(tmpNewQuantifierObject, 'renderReport', { get: function() { return _RenderingTools.renderReport; } });
 
 		return tmpNewQuantifierObject;
 	}

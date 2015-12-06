@@ -53,7 +53,7 @@ suite
 						Expect(testQuantifier.settings).to.have.a.property('Title')
 							.that.is.a('string'); 
 						Expect(testQuantifier.settings).to.have.a.property('Description')
-							.that.is.a('string'); 
+							.that.is.a('boolean'); 
 						Expect(testQuantifier.settings).to.have.a.property('Minimum')
 							.that.is.a('boolean'); 
 						Expect(testQuantifier.settings).to.have.a.property('Maximum')
@@ -81,11 +81,14 @@ suite
 					function()
 					{
 						var testQuantifier = libQuantifier.new();
-						testQuantifier.addValue(1);
-						testQuantifier.addValue(5, 2);
-						testQuantifier.addValue(1);
-						testQuantifier.addValue(8, 6);
-						testQuantifier.addValue(10);
+						testQuantifier.settings.Title = 'Unit Test Histogram 1';
+						testQuantifier.settings.Description = 'Add a few values to a 1...10 histogram to exercise basic functionality.';
+
+						testQuantifier.addBin(1);
+						testQuantifier.addBin(5, 2);
+						testQuantifier.addBin(1);
+						testQuantifier.addBin(8, 6);
+						testQuantifier.addBin(10);
 
 						Expect(testQuantifier.statistics.Minimum)
 							.to.equal(1);
@@ -93,12 +96,14 @@ suite
 						Expect(testQuantifier.statistics.Maximum)
 							.to.equal(10);
 
-						Expect(testQuantifier.values[1])
+						Expect(testQuantifier.bins[1])
 							.to.equal(2);
 						testQuantifier.generateStatistics();
 
-						console.log(JSON.stringify(testQuantifier.statistics, null, 4));
-						testQuantifier.renderConsoleHorizontalBar();
+						//console.log(JSON.stringify(testQuantifier.statistics, null, 4));
+						testQuantifier.renderReport('HorizontalBar');
+
+						testQuantifier.renderReport('HorizontalBarLog10');
 					}
 				);
 
