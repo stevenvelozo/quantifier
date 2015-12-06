@@ -1,0 +1,35 @@
+{
+  "name": "quantifier",
+  "version": "1.0.0",
+  "description": "Histogram Quantization Library",
+  "main": "source/Quantifier.js",
+  "scripts": {
+    "coverage": "./node_modules/istanbul/lib/cli.js cover ./node_modules/mocha/bin/_mocha -- -u tdd -R spec",
+    "test": "./node_modules/mocha/bin/_mocha -u tdd -R spec",
+    "doc": "./node_modules/groc/bin/groc --index-page-title Overview ./README.md ./source/**/*.js ./source/*.js",
+    "doc-stage-retold": "./node_modules/groc/bin/groc --index-page-title Overview -o ../retold/fable ./README.md ./source/**/*.js"
+   },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/stevenvelozo/quantifier.git"
+  },
+  "keywords": [
+    "histogram"
+  ],
+  "author": "steven velozo",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/stevenvelozo/quantifier/issues"
+  },
+  "homepage": "https://github.com/stevenvelozo/quantifier#readme",
+  "devDependencies": {
+    "chai": "2.0.0",
+    "codeclimate-test-reporter": "0.0.4",
+    "coveralls": "^2.11.2",
+    "istanbul": "0.3.5",
+    "mocha": "2.1.0"
+  },
+  "dependencies": {
+    "underscore": "^1.8.3"
+  }
+}
