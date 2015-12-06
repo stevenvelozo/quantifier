@@ -2,6 +2,8 @@ language: node_js
 node_js:
   - "5.1.1"
 addons:
+  code_climate:
+    repo_token: 102b78946cbf7f4d0930a0148f06024f576b433d5519e7655d06dcefa3ce8600
 after_success:
   - npm run coverage
 after_script:
