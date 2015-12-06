@@ -16,5 +16,7 @@ module.exports = (
 	Description: 'This is a default histogram created with Quantifier',
 
 	Minimum: false,
-	Maximum: false
+	Maximum: false,
+
+	FixedRange: false
 });

@@ -62,8 +62,8 @@ suite
 						Expect(testQuantifier).to.have.a.property('statistics')
 							.that.is.a('object');
 						Expect(testQuantifier.statistics).to.have.a.property('Entries')
-							.that.is.a('number'); 
-						Expect(testQuantifier.statistics).to.have.a.property('ActiveBins')
+							.that.is.a('boolean'); 
+						Expect(testQuantifier.statistics).to.have.a.property('PushOperations')
 							.that.is.a('number'); 
 					}
 				);
@@ -84,13 +84,21 @@ suite
 						testQuantifier.addValue(1);
 						testQuantifier.addValue(5, 2);
 						testQuantifier.addValue(1);
+						testQuantifier.addValue(8, 6);
 						testQuantifier.addValue(10);
 
-						Expect(testQuantifier.statistics.ActiveBins)
-							.to.equal(3);
+						Expect(testQuantifier.statistics.Minimum)
+							.to.equal(1);
 
-						Expect(testQuantifier.values["1"])
+						Expect(testQuantifier.statistics.Maximum)
+							.to.equal(10);
+
+						Expect(testQuantifier.values[1])
 							.to.equal(2);
+						testQuantifier.generateStatistics();
+
+						console.log(JSON.stringify(testQuantifier.statistics, null, 4));
+						testQuantifier.renderConsoleHorizontalBar();
 					}
 				);
 
