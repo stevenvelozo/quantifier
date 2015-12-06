@@ -82,9 +82,14 @@ suite
 					{
 						var testQuantifier = libQuantifier.new();
 						testQuantifier.addValue(1);
+						testQuantifier.addValue(5, 2);
+						testQuantifier.addValue(1);
 						testQuantifier.addValue(10);
 
 						Expect(testQuantifier.statistics.ActiveBins)
+							.to.equal(3);
+
+						Expect(testQuantifier.values["1"])
 							.to.equal(2);
 					}
 				);
