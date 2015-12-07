@@ -8,7 +8,7 @@
     "test": "./node_modules/mocha/bin/_mocha -u tdd -R spec",
     "doc": "./node_modules/groc/bin/groc --index-page-title Overview ./README.md ./source/**/*.js ./source/*.js",
     "doc-stage-retold": "./node_modules/groc/bin/groc --index-page-title Overview -o ../retold/fable ./README.md ./source/**/*.js"
-   },
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/stevenvelozo/quantifier.git"
@@ -30,6 +30,7 @@
     "mocha": "2.1.0"
   },
   "dependencies": {
+    "bignumber": "^1.1.0",
     "underscore": "^1.8.3"
   }
 }
