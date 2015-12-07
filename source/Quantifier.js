@@ -4,6 +4,7 @@
 * @author <steven@velozo.com>
 */
 var libUnderscore = require('underscore');
+var libBigNumber = require('bignumber');
 
 /**
 * Quantifier Histogram Parsing Library
@@ -58,8 +59,15 @@ var Quantifier = function()
 			{
 				tmpNewQuantifierObject.addBin = addBinNativeMath;
 			}
+			else
+			{
+				// Configure libBigNumber with the number of decimal places and rounding mode
+				libBigNumber.config({ DECIMAL_PLACES: _Settings.MathMode.BigNumber.DecimalPlaces, ROUNDING_MODE: _Settings.MathMode.BigNumber.RoundingMethod });
+				tmpNewQuantifierObject.addBin = addBinArbitraryPrecisionMath;
+			}
 		};
 
+		// This only gets called the first time we call addBin, to laziliy initialize the dynamic functionality
 		var addBin = function(pBin, pBinAmount)
 		{
 			// Because the binning method hasn't been initialized yet, we need to init it now.
@@ -67,11 +75,25 @@ var Quantifier = function()
 			tmpNewQuantifierObject.addBin(pBin, pBinAmount);
 		};
 
+		// Update Various Statistics on a Bin Push Operation
+		var updateLiveStatistics = function(pBin)
+		{
+			_Statistics.PushOperations++;
+
+			if (!_Statistics.Minimum || (pBin < _Statistics.Minimum))
+			{
+				_Statistics.Minimum = pBin;
+			}
+			if (!_Statistics.Maximum || (pBin > _Statistics.Maximum))
+			{
+				_Statistics.Maximum = pBin;
+			}
+		};
 
 		// Add to a Bin in the set using native Javascript math
 		var addBinNativeMath = function(pBin, pBinAmount)
 		{
-			var tmpBin = false;parseInt(pBin);
+			var tmpBin = false;
 
 			// Branch on rounding method
 			if (!_Settings.MathMode.Standard.Rounding)
@@ -88,22 +110,38 @@ var Quantifier = function()
 			// Get the bin amount
 			var tmpBinAmount = (typeof(pBinAmount) === 'number') ? pBinAmount : 1;
 
+			// Initialize the bin
 			if (_Bins[tmpBin] == null)
 			{
 				_Bins[tmpBin] = 0;
 			}
 
-			if (!_Statistics.Minimum || (tmpBin < _Statistics.Minimum))
+			updateLiveStatistics(tmpBin);
+
+			_Bins[tmpBin] += tmpBinAmount;
+
+			return tmpNewQuantifierObject;
+		}
+
+
+		// Add to a Bin in the set using native Javascript math
+		var addBinArbitraryPrecisionMath = function(pBin, pBinAmount)
+		{
+			// Bins are still integers, so round after loading
+			var tmpBin = libBigNumber(pBin).round().toNumber();
+
+			// Get the bin amount
+			var tmpBinAmount = (typeof(pBinAmount) === 'number') ? new libBigNumber(pBinAmount) : new libBigNumber(1);
+
+			// Initialize the bin
+			if (_Bins[tmpBin] == null)
 			{
-				_Statistics.Minimum = tmpBin;
-			}
-			if (!_Statistics.Maximum || (tmpBin > _Statistics.Maximum))
-			{
-				_Statistics.Maximum = tmpBin;
+				_Bins[tmpBin] = new libBigNumber(0);
 			}
 
-			_Statistics.PushOperations++;
-			_Bins[tmpBin] += tmpBinAmount;
+			updateLiveStatistics(tmpBin);
+
+			_Bins[tmpBin].add(tmpBinAmount);
 
 			return tmpNewQuantifierObject;
 		}
@@ -118,9 +156,14 @@ var Quantifier = function()
 				return tmpNewQuantifierObject;
 			}
 
+			// Set the cache to valid
+			_Statistics.PushOperationsAtStatisticsGeneration = _Statistics.PushOperations;
+
+			// Reset some statistics
 			_Statistics.SetTotal = 0;
 			_Statistics.Entries = 0;
 
+			// Walk the bins, updating stat values
 			for (var i = _Statistics.Minimum; i < _Statistics.Maximum; i++)
 			{
 				if (_Bins[i] == null)
@@ -139,6 +182,7 @@ var Quantifier = function()
 				_Statistics.SetTotal += _Bins[i];
 
 			}
+
 			// First, reset the statistics.
 			return tmpNewQuantifierObject;
 		};
