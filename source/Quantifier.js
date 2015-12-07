@@ -51,11 +51,41 @@ var Quantifier = function()
 		// A set of consistent functions and tools for rendering to the console
 		var _RenderingTools = false;
 
+		// Setup the Math functions and other behaviors
+		var initialize = function(pBin, pBinAmount)
+		{
+			if (!_Settings.MathMode.ArbitraryPrecision)
+			{
+				tmpNewQuantifierObject.addBin = addBinNativeMath;
+			}
+		};
 
-		// Add to a Bin in the set
 		var addBin = function(pBin, pBinAmount)
 		{
-			var tmpBin = parseInt(pBin);
+			// Because the binning method hasn't been initialized yet, we need to init it now.
+			initialize(pBin, pBinAmount);
+			tmpNewQuantifierObject.addBin(pBin, pBinAmount);
+		};
+
+
+		// Add to a Bin in the set using native Javascript math
+		var addBinNativeMath = function(pBin, pBinAmount)
+		{
+			var tmpBin = false;parseInt(pBin);
+
+			// Branch on rounding method
+			if (!_Settings.MathMode.Standard.Rounding)
+			{
+				// Don't round at all.  Naively parse the int
+				tmpBin = parseInt(pBin);
+			}
+			else
+			{
+				// Use Math.round
+				tmpBin = Math.round(pBin);
+			}
+
+			// Get the bin amount
 			var tmpBinAmount = (typeof(pBinAmount) === 'number') ? pBinAmount : 1;
 
 			if (_Bins[tmpBin] == null)
@@ -117,6 +147,8 @@ var Quantifier = function()
 		// Container Object for our Factory Pattern
 		var tmpNewQuantifierObject = (
 		{
+			initialize: initialize,
+
 			addBin: addBin,
 
 			generateStatistics: generateStatistics,
