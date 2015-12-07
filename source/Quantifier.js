@@ -55,24 +55,25 @@ var Quantifier = function()
 		// Add to a Bin in the set
 		var addBin = function(pBin, pBinAmount)
 		{
+			var tmpBin = parseInt(pBin);
 			var tmpBinAmount = (typeof(pBinAmount) === 'number') ? pBinAmount : 1;
 
-			if (_Bins[pBin] == null)
+			if (_Bins[tmpBin] == null)
 			{
-				_Bins[pBin] = 0;
+				_Bins[tmpBin] = 0;
 			}
 
-			if (!_Statistics.Minimum || (pBin < _Statistics.Minimum))
+			if (!_Statistics.Minimum || (tmpBin < _Statistics.Minimum))
 			{
-				_Statistics.Minimum = pBin;
+				_Statistics.Minimum = tmpBin;
 			}
-			if (!_Statistics.Maximum || (pBin > _Statistics.Maximum))
+			if (!_Statistics.Maximum || (tmpBin > _Statistics.Maximum))
 			{
-				_Statistics.Maximum = pBin;
+				_Statistics.Maximum = tmpBin;
 			}
 
 			_Statistics.PushOperations++;
-			_Bins[pBin] += tmpBinAmount;
+			_Bins[tmpBin] += tmpBinAmount;
 
 			return tmpNewQuantifierObject;
 		}

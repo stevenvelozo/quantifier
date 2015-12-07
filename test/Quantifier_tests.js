@@ -81,8 +81,7 @@ suite
 					function()
 					{
 						var testQuantifier = libQuantifier.new();
-						testQuantifier.settings.Title = 'Unit Test Histogram 1';
-						testQuantifier.settings.Description = 'Add a few values to a 1...10 histogram to exercise basic functionality.';
+						testQuantifier.settings.Title = 'Simple Histogram 1';
 
 						testQuantifier.addBin(1);
 						testQuantifier.addBin(5, 2);
@@ -106,7 +105,37 @@ suite
 						testQuantifier.renderReport('HorizontalBarLog10');
 					}
 				);
+				test
+				(
+					'generate a complex larger histogram',
+					function()
+					{
+						var testQuantifier = libQuantifier.new();
+						testQuantifier.settings.Title = 'Larger Histogram 2';
+						testQuantifier.settings.Description = 'Add a large number of values to a 1...25 histogram to exercise basic scalability.';
 
+						var tmpBinMin = 1;
+						var tmpBinMax = 25;
+
+						for (var i = 0; i < 1000000; i++)
+							testQuantifier.addBin(Math.random() * (tmpBinMax - tmpBinMin) + tmpBinMin);
+						for (var i = 0; i < 500000; i++)
+							testQuantifier.addBin(Math.random() * (15 - 5) + 5);
+						for (var i = 0; i < 200000; i++)
+							testQuantifier.addBin(Math.random() * (11 - 8) + 8);
+						for (var i = 0; i < 100000; i++)
+							testQuantifier.addBin(Math.random() * (9 - 8) + 8);
+						testQuantifier.generateStatistics();
+
+						//console.log(JSON.stringify(testQuantifier.statistics, null, 4));
+						testQuantifier.renderReport('HorizontalBar');
+
+						testQuantifier.renderReport('HorizontalBarLog10');
+
+						Expect(testQuantifier.statistics.PushOperations)
+							.to.equal(1800000);
+					}
+				);
 			}
 		);
 
