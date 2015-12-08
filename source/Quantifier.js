@@ -144,7 +144,7 @@ var Quantifier = function()
 
 			updateLiveStatistics(tmpBin);
 
-			_Bins[tmpBin].add(tmpBinAmount);
+			_Bins[tmpBin] = _Bins[tmpBin].plus(tmpBinAmount);
 
 			return tmpNewQuantifierObject;
 		}
@@ -169,11 +169,8 @@ var Quantifier = function()
 			_Statistics.ProcessedBins = [];
 
 			// Walk the bins, updating stat values
-			for (var i = _Statistics.Minimum; i < _Statistics.Maximum; i++)
+			for (var i = _Statistics.Minimum; i <= _Statistics.Maximum; i++)
 			{
-				if (_Bins[i] == null)
-					continue;
-
 				// Add this to the processed bins (to deal with arbitrary precision)
 				if (_Settings.MathMode.ArbitraryPrecision)
 				{
@@ -183,6 +180,9 @@ var Quantifier = function()
 				{
 					_Statistics.ProcessedBins[i] = _Bins[i];
 				}
+
+				if (_Bins[i] == null)
+					continue;
 
 				if (!_Statistics.BinMinimum || (_Bins[i] < _Statistics.BinMinimum))
 				{

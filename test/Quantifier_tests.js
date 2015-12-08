@@ -75,6 +75,7 @@ suite
 			'Basic Histogramming',
 			function()
 			{
+
 				test
 				(
 					'generate a small simple histogram',
@@ -99,17 +100,18 @@ suite
 							.to.equal(2);
 						testQuantifier.generateStatistics();
 
-						//console.log(JSON.stringify(testQuantifier.statistics, null, 4));
 						testQuantifier.renderReport('HorizontalBar');
-
 						testQuantifier.renderReport('HorizontalBarLog10');
 					}
 				);
+
 				test
 				(
 					'generate a complex larger histogram',
 					function()
 					{
+						var tmpOperationStartTime = +new Date();
+
 						var testQuantifier = libQuantifier.new();
 						testQuantifier.settings.Title = 'Larger Histogram 2';
 						testQuantifier.settings.Description = 'Add a large number of values to a 1...25 histogram to exercise basic scalability.';
@@ -127,41 +129,51 @@ suite
 							testQuantifier.addBin(Math.random() * (9 - 8) + 8);
 						testQuantifier.generateStatistics();
 
-						//console.log(JSON.stringify(testQuantifier.statistics, null, 4));
-						testQuantifier.renderReport('HorizontalBar');
+						var tmpOperationEndTime = +new Date();
+						var tmpOperationTime = tmpOperationEndTime - tmpOperationStartTime;
+						console.log('  > Statistics Generated in '+tmpOperationTime+'ms');
 
+						//testQuantifier.renderReport('HorizontalBar');
 						testQuantifier.renderReport('HorizontalBarLog10');
 
 						Expect(testQuantifier.statistics.PushOperations)
 							.to.equal(1800000);
 					}
 				);
+
 				test
 				(
 					'generate a complex larger histogram with Arbitrary Precision',
 					function()
 					{
+						// This test can take a long time.  Give it at least 20 seconds.
+						this.timeout(20000);
+
+						var tmpOperationStartTime = +new Date();
+
 						var testQuantifier = libQuantifier.new();
 						testQuantifier.settings.MathMode.ArbitraryPrecision = true;
 						testQuantifier.settings.Title = 'Larger Histogram 3';
-						testQuantifier.settings.Description = 'Add a large number of values to a 1...10 histogram to exercise basic scalability.';
+						testQuantifier.settings.Description = 'Using arbitrary precision ... Add a large number of values to a 1...25 histogram to exercise basic scalability.';
 
 						var tmpBinMin = 1;
-						var tmpBinMax = 10;
+						var tmpBinMax = 25;
 
 						for (var i = 0; i < 1000000; i++)
 							testQuantifier.addBin(Math.random() * (tmpBinMax - tmpBinMin) + tmpBinMin);
 						for (var i = 0; i < 500000; i++)
-							testQuantifier.addBin(Math.random() * (9-3) + 3);
+							testQuantifier.addBin(Math.random() * (15 - 5) + 5);
 						for (var i = 0; i < 200000; i++)
-							testQuantifier.addBin(Math.random() * (9-4) + 4);
+							testQuantifier.addBin(Math.random() * (11 - 8) + 8);
 						for (var i = 0; i < 100000; i++)
-							testQuantifier.addBin(Math.random() * (7-5) + 5);
+							testQuantifier.addBin(Math.random() * (9 - 8) + 8);
 						testQuantifier.generateStatistics();
 
-						//console.log(JSON.stringify(testQuantifier.statistics, null, 4));
-						testQuantifier.renderReport('HorizontalBar');
+						var tmpOperationEndTime = +new Date();
+						var tmpOperationTime = tmpOperationEndTime - tmpOperationStartTime;
+						console.log('  > Statistics Generated in '+tmpOperationTime+'ms');
 
+						//testQuantifier.renderReport('HorizontalBar');
 						testQuantifier.renderReport('HorizontalBarLog10');
 
 						Expect(testQuantifier.statistics.PushOperations)

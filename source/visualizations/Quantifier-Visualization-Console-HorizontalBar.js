@@ -41,9 +41,12 @@ var renderConsoleHorizontalBar = function(pQuantifier)
 	_BarGraphicCache = "#".repeat(tmpWidth)+'|';
 
 	pQuantifier.renderingTools.renderReportHeader('Horizontal Bar');
+	
+	console.log(JSON.stringify(pQuantifier.bins));
 
 	for (var i = pQuantifier.statistics.Minimum; i <= pQuantifier.statistics.Maximum; i++)
 	{
+		//console.log(i+' >>> ' + typeof(pQuantifier.statistics.ProcessedBins[i]) + ' ' + typeof(pQuantifier.bins[i]));
 		var tmpBinAmount = (pQuantifier.statistics.ProcessedBins[i] === null) ? 0 : pQuantifier.statistics.ProcessedBins[i];
 		pQuantifier.renderingTools.writeReportLine(generateBar(i, tmpBinAmount, pQuantifier.statistics.BinMaximum, tmpWidth));
 	}
