@@ -136,6 +136,38 @@ suite
 							.to.equal(1800000);
 					}
 				);
+				test
+				(
+					'generate a complex larger histogram with Arbitrary Precision',
+					function()
+					{
+						var testQuantifier = libQuantifier.new();
+						testQuantifier.settings.MathMode.ArbitraryPrecision = true;
+						testQuantifier.settings.Title = 'Larger Histogram 3';
+						testQuantifier.settings.Description = 'Add a large number of values to a 1...10 histogram to exercise basic scalability.';
+
+						var tmpBinMin = 1;
+						var tmpBinMax = 10;
+
+						for (var i = 0; i < 1000000; i++)
+							testQuantifier.addBin(Math.random() * (tmpBinMax - tmpBinMin) + tmpBinMin);
+						for (var i = 0; i < 500000; i++)
+							testQuantifier.addBin(Math.random() * (9-3) + 3);
+						for (var i = 0; i < 200000; i++)
+							testQuantifier.addBin(Math.random() * (9-4) + 4);
+						for (var i = 0; i < 100000; i++)
+							testQuantifier.addBin(Math.random() * (7-5) + 5);
+						testQuantifier.generateStatistics();
+
+						//console.log(JSON.stringify(testQuantifier.statistics, null, 4));
+						testQuantifier.renderReport('HorizontalBar');
+
+						testQuantifier.renderReport('HorizontalBarLog10');
+
+						Expect(testQuantifier.statistics.PushOperations)
+							.to.equal(1800000);
+					}
+				);
 			}
 		);
 

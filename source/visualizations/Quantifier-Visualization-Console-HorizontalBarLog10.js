@@ -14,7 +14,7 @@
 var _BarGraphicCache = '';
 var generateBar = function(pValue, pAmount, pMax, pWidth)
 {
-	var tmpBarRenderAmount = Math.log(pAmount) / (Math.log(pMax) / pWidth);
+	var tmpBarRenderAmount = (pAmount === 0) ? 0 : Math.log(pAmount) / (Math.log(pMax) / pWidth);
 
 	// If the value equates to 0, just show an empty bar.
 	if (parseInt(tmpBarRenderAmount) == 0)
@@ -37,11 +37,8 @@ var renderConsoleHorizontalBar = function(pQuantifier)
 
 	for (var i = pQuantifier.statistics.Minimum; i <= pQuantifier.statistics.Maximum; i++)
 	{
-		var tmpAmount = 0;
-		if (pQuantifier.bins[i] == null)
-			pQuantifier.renderingTools.writeReportLine(generateBar(i, 0, pQuantifier.statistics.BinMaximum, tmpWidth));
-		else
-			pQuantifier.renderingTools.writeReportLine(generateBar(i, pQuantifier.bins[i], pQuantifier.statistics.BinMaximum, tmpWidth));
+		var tmpBinAmount = (pQuantifier.statistics.ProcessedBins[i] == null) ? 0 : pQuantifier.statistics.ProcessedBins[i];
+		pQuantifier.renderingTools.writeReportLine(generateBar(i, tmpBinAmount, pQuantifier.statistics.BinMaximum, tmpWidth));
 	}
 
 	pQuantifier.renderingTools.renderReportFooter('Horizontal Bar Log10');

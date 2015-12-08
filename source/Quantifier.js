@@ -4,7 +4,7 @@
 * @author <steven@velozo.com>
 */
 var libUnderscore = require('underscore');
-var libBigNumber = require('bignumber');
+var libBigNumber = require('bignumber.js');
 
 /**
 * Quantifier Histogram Parsing Library
@@ -31,6 +31,8 @@ var Quantifier = function()
 
 			// The total number of bins that have been touched (note that bins with value 0 are counted but null are not)
 			Entries: false,
+
+			ProcessedBins: [],
 
 			// The sum of all bins values 
 			SetTotal: false,
@@ -62,7 +64,8 @@ var Quantifier = function()
 			else
 			{
 				// Configure libBigNumber with the number of decimal places and rounding mode
-				libBigNumber.config({ DECIMAL_PLACES: _Settings.MathMode.BigNumber.DecimalPlaces, ROUNDING_MODE: _Settings.MathMode.BigNumber.RoundingMethod });
+				// ERRORS is set to surpress the double int 15 significant digits issues
+				libBigNumber.config({ ERRORS: false, DECIMAL_PLACES: _Settings.MathMode.BigNumber.DecimalPlaces, ROUNDING_MODE: _Settings.MathMode.BigNumber.RoundingMethod });
 				tmpNewQuantifierObject.addBin = addBinArbitraryPrecisionMath;
 			}
 		};
@@ -128,7 +131,7 @@ var Quantifier = function()
 		var addBinArbitraryPrecisionMath = function(pBin, pBinAmount)
 		{
 			// Bins are still integers, so round after loading
-			var tmpBin = libBigNumber(pBin).round().toNumber();
+			var tmpBin = new libBigNumber(pBin).round().toNumber();
 
 			// Get the bin amount
 			var tmpBinAmount = (typeof(pBinAmount) === 'number') ? new libBigNumber(pBinAmount) : new libBigNumber(1);
@@ -150,6 +153,7 @@ var Quantifier = function()
 		// Generates statistics about the entire set
 		var generateStatistics = function()
 		{
+			console.log('  --> Processing Statistics');
 			if (_Statistics.PushOperationsAtStatisticsGeneration >= _Statistics.PushOperations)
 			{
 				// The statistics cache is still valid, so keep using it.
@@ -162,12 +166,23 @@ var Quantifier = function()
 			// Reset some statistics
 			_Statistics.SetTotal = 0;
 			_Statistics.Entries = 0;
+			_Statistics.ProcessedBins = [];
 
 			// Walk the bins, updating stat values
 			for (var i = _Statistics.Minimum; i < _Statistics.Maximum; i++)
 			{
 				if (_Bins[i] == null)
 					continue;
+
+				// Add this to the processed bins (to deal with arbitrary precision)
+				if (_Settings.MathMode.ArbitraryPrecision)
+				{
+					_Statistics.ProcessedBins[i] = _Bins[i].round().toNumber();
+				}
+				else
+				{
+					_Statistics.ProcessedBins[i] = _Bins[i];
+				}
 
 				if (!_Statistics.BinMinimum || (_Bins[i] < _Statistics.BinMinimum))
 				{

@@ -14,7 +14,7 @@ var generateBar = function(pValue, pAmount, pMax, pWidth)
 {
 	var tmpBarRenderAmount = pAmount;
 
-	if (pMax > pWidth)
+	if ((pMax > pWidth) && (tmpBarRenderAmount > 0))
 	{
 		tmpBarRenderAmount = pAmount / (pMax / pWidth);
 	}
@@ -44,11 +44,8 @@ var renderConsoleHorizontalBar = function(pQuantifier)
 
 	for (var i = pQuantifier.statistics.Minimum; i <= pQuantifier.statistics.Maximum; i++)
 	{
-		var tmpAmount = 0;
-		if (pQuantifier.bins[i] == null)
-			pQuantifier.renderingTools.writeReportLine(generateBar(i, 0, pQuantifier.statistics.BinMaximum, tmpWidth));
-		else
-			pQuantifier.renderingTools.writeReportLine(generateBar(i, pQuantifier.bins[i], pQuantifier.statistics.BinMaximum, tmpWidth));
+		var tmpBinAmount = (pQuantifier.statistics.ProcessedBins[i] === null) ? 0 : pQuantifier.statistics.ProcessedBins[i];
+		pQuantifier.renderingTools.writeReportLine(generateBar(i, tmpBinAmount, pQuantifier.statistics.BinMaximum, tmpWidth));
 	}
 
 	pQuantifier.renderingTools.renderReportFooter('Horizontal Bar');
