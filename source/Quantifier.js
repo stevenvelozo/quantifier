@@ -5,6 +5,7 @@
 */
 var libUnderscore = require('underscore');
 var libBigNumber = require('bignumber.js');
+var libQuantifierSettings = require('./Quantifier-DefaultSettings.js');
 
 /**
 * Quantifier Histogram Parsing Library
@@ -15,37 +16,41 @@ var Quantifier = function()
 {
 	function createNew(pSettings)
 	{
-		var _Settings = libUnderscore.extend({}, pSettings, require('./Quantifier-DefaultSettings.js'));
+		var _Settings = libUnderscore.extend({}, pSettings, libQuantifierSettings.construct());
 
 		// The bins in the set
 		var _Bins = [];
 
 		// The statistics about this set
-		var _Statistics = (
-		{
-			// The actual minimum and maximum for the set of bins
-			Minimum: false,
-			Maximum: false,
-			// The size (length) of the set
-			Size: false,
+		var _Statistics = libUnderscore.extend({},
+			{
+				// The actual minimum and maximum for the set of bins
+				SetMinimum: false,
+				SetMaximum: false,
 
-			// The total number of bins that have been touched (note that bins with value 0 are counted but null are not)
-			Entries: false,
+				// The defined minimum and maximum for the set of bins
+				Minimum: false,
+				Maximum: false,
+				// The size (length) of the set
+				Size: false,
 
-			ProcessedBins: [],
+				// The total number of bins that have been touched (note that bins with value 0 are counted but null are not)
+				Entries: false,
 
-			// The sum of all bins values 
-			SetTotal: false,
+				ProcessedBins: [],
 
-			// The total number of push operations which have been made to the set
-			PushOperations: 0,
-			// The number of push operations when the statistics were last generated (for cache validation)
-			PushOperationsAtStatisticsGeneration: -1,
+				// The sum of all bins values 
+				SetTotal: false,
 
-			// The smallest and largest bin values. (note that null is not counted as 0)
-			BinMinimum: false,
-			BinMaximum: false
-		});
+				// The total number of push operations which have been made to the set
+				PushOperations: 0,
+				// The number of push operations when the statistics were last generated (for cache validation)
+				PushOperationsAtStatisticsGeneration: -1,
+
+				// The smallest and largest bin values. (note that null is not counted as 0)
+				BinMinimum: false,
+				BinMaximum: false
+			});
 
 		// An empty object to cache report code in.
 		// This allows the system to lazily load necessary reports, and consumers to add to/override default report behavior.
@@ -83,13 +88,13 @@ var Quantifier = function()
 		{
 			_Statistics.PushOperations++;
 
-			if (!_Statistics.Minimum || (pBin < _Statistics.Minimum))
+			if (!_Statistics.SetMinimum || (pBin < _Statistics.SetMinimum))
 			{
-				_Statistics.Minimum = pBin;
+				_Statistics.SetMinimum = pBin;
 			}
-			if (!_Statistics.Maximum || (pBin > _Statistics.Maximum))
+			if (!_Statistics.SetMaximum || (pBin > _Statistics.SetMaximum))
 			{
-				_Statistics.Maximum = pBin;
+				_Statistics.SetMaximum = pBin;
 			}
 		};
 
@@ -153,7 +158,6 @@ var Quantifier = function()
 		// Generates statistics about the entire set
 		var generateStatistics = function()
 		{
-			console.log('  --> Processing Statistics');
 			if (_Statistics.PushOperationsAtStatisticsGeneration >= _Statistics.PushOperations)
 			{
 				// The statistics cache is still valid, so keep using it.
@@ -164,14 +168,35 @@ var Quantifier = function()
 			_Statistics.PushOperationsAtStatisticsGeneration = _Statistics.PushOperations;
 
 			// Reset some statistics
+			_Statistics.Size = 0;
 			_Statistics.SetTotal = 0;
 			_Statistics.Entries = 0;
 			_Statistics.ProcessedBins = [];
 
+			if (_Settings.FixedRange)
+			{
+				// If the user set a fixed range for the histogram set scope, use that
+				_Statistics.Minimum = _Settings.Minimum;
+				_Statistics.Maximum = _Settings.Maximum;
+			}
+			else
+			{
+				// Otherwise, use the dynamically captured data
+				_Statistics.Minimum = _Statistics.SetMinimum;
+				_Statistics.Maximum = _Statistics.SetMaximum;
+			}
+
 			// Walk the bins, updating stat values
 			for (var i = _Statistics.Minimum; i <= _Statistics.Maximum; i++)
 			{
-				// Add this to the processed bins (to deal with arbitrary precision)
+				// If this is out of scope, just put a 0 in.
+				if ((_Bins[i] == undefined) || (_Bins[i] == null))
+				{
+					_Statistics.ProcessedBins[i] = 0;
+					continue;					
+				}
+
+				// Add this value to the processed bins
 				if (_Settings.MathMode.ArbitraryPrecision)
 				{
 					_Statistics.ProcessedBins[i] = _Bins[i].round().toNumber();
@@ -181,9 +206,7 @@ var Quantifier = function()
 					_Statistics.ProcessedBins[i] = _Bins[i];
 				}
 
-				if (_Bins[i] == null)
-					continue;
-
+				// Check the bin max/min
 				if (!_Statistics.BinMinimum || (_Bins[i] < _Statistics.BinMinimum))
 				{
 					_Statistics.BinMinimum = _Bins[i];
@@ -193,13 +216,75 @@ var Quantifier = function()
 					_Statistics.BinMaximum = _Bins[i];
 				}
 
+				// Add to the valid entry count
 				_Statistics.Entries++;
+
+				// Sum the set total (not currently using arbitrary precision)
 				_Statistics.SetTotal += _Bins[i];
 
+				// Compute the set size
+				_Statistics.Size = _Statistics.Maximum - _Statistics.Minimum + 1
 			}
 
 			// First, reset the statistics.
 			return tmpNewQuantifierObject;
+		};
+
+
+		// Recursive Greatest Common Factor
+		function greatestCommonFactor(pDivisor, pDivisee)
+		{
+			if (pDivisee)
+			{
+				return greatestCommonFactor(pDivisee, pDivisor % pDivisee);
+			}
+			else
+			{
+				//console.log(' --> Greatest Common Factor: '+Math.abs(pDivisor));
+				return Math.abs(pDivisor);
+			}
+		};
+
+
+		// Quantize the current histogram into a new histogram of a different size.
+		function quantize(pSetSize)
+		{
+			generateStatistics();
+
+			// If the sizes match, return this histogram.
+			if (pSetSize == _Statistics.Size)
+				return tmpNewQuantifierObject;
+
+			// Create a histogram to stuff these values into
+			var tmpNewHistogram = createNew();
+
+			var tmpSetMultiplier = pSetSize / _Statistics.Size;
+
+			for (var i = _Statistics.Minimum; i <= _Statistics.Maximum; i++)
+			{
+				// TODO: Allow arbitrary precision for quantizatino as well
+				tmpNewHistogram.addBin(Math.round(i*tmpSetMultiplier), _Statistics.ProcessedBins[i])
+			}
+
+			tmpNewHistogram.generateStatistics();
+
+			return tmpNewHistogram;
+		};
+
+
+		function quantizeLargestPossibleEvenSet(pSetMaxSize)
+		{
+			generateStatistics();
+
+			//console.log('Quantizing a set with size '+_Statistics.Size+' to match '+pSetMaxSize);
+
+			// IF THE MAX SIZE IS SMALLER THAN THE SET SIZE ... Take the current set size, and quantize it down to the greatest common factor with the current set.
+			var tmpFactoredSize = greatestCommonFactor(pSetMaxSize, _Statistics.Size);
+
+			//console.log('--> Factored to: '+tmpFactoredSize);
+
+			// Now requantize the set into that size.
+			return quantize(tmpFactoredSize);
 		};
 
 
@@ -211,6 +296,9 @@ var Quantifier = function()
 			addBin: addBin,
 
 			generateStatistics: generateStatistics,
+
+			quantize: quantize,
+			quantizeLargestPossibleEvenSet: quantizeLargestPossibleEvenSet,
 
 			new: createNew
 		});

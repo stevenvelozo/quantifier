@@ -84,11 +84,15 @@ suite
 						var testQuantifier = libQuantifier.new();
 						testQuantifier.settings.Title = 'Simple Histogram 1';
 
+						testQuantifier.settings.ConsoleRendering.Height = 25;
+
 						testQuantifier.addBin(1);
 						testQuantifier.addBin(5, 2);
 						testQuantifier.addBin(1);
 						testQuantifier.addBin(8, 6);
 						testQuantifier.addBin(10);
+
+						testQuantifier.generateStatistics();
 
 						Expect(testQuantifier.statistics.Minimum)
 							.to.equal(1);
@@ -98,9 +102,43 @@ suite
 
 						Expect(testQuantifier.bins[1])
 							.to.equal(2);
-						testQuantifier.generateStatistics();
 
 						testQuantifier.renderReport('HorizontalBar');
+						testQuantifier.settings.ConsoleRendering.HeaderDescription = false;
+						testQuantifier.renderReport('VerticalBar');
+					}
+				);
+
+				test
+				(
+					'generate a small fixed width histogram',
+					function()
+					{
+						var testQuantifier = libQuantifier.new();
+						testQuantifier.settings.Minimum = 1;
+						testQuantifier.settings.Maximum = 15;
+						testQuantifier.settings.FixedRange = true;
+						testQuantifier.settings.Title = 'Simple Histogram 2';
+
+						testQuantifier.addBin(1);
+						testQuantifier.addBin(5, 2);
+						testQuantifier.addBin(1);
+						testQuantifier.addBin(8, 6);
+						testQuantifier.addBin(10, 4);
+
+						testQuantifier.generateStatistics();
+
+						Expect(testQuantifier.statistics.Minimum)
+							.to.equal(1);
+
+						Expect(testQuantifier.statistics.Maximum)
+							.to.equal(15);
+
+						Expect(testQuantifier.bins[1])
+							.to.equal(2);
+
+						testQuantifier.renderReport('HorizontalBar');
+						testQuantifier.settings.ConsoleRendering.HeaderDescription = false;
 						testQuantifier.renderReport('VerticalBar');
 					}
 				);
@@ -134,8 +172,9 @@ suite
 
 						var tmpOperationEndTime = +new Date();
 						var tmpOperationTime = tmpOperationEndTime - tmpOperationStartTime;
-						console.log('  > Statistics Generated in '+tmpOperationTime+'ms');
+						console.log('  > Data Inserted and Statistics Generated in '+tmpOperationTime+'ms');
 
+						testQuantifier.settings.ConsoleRendering.HeaderDescription = false;
 						//testQuantifier.renderReport('HorizontalBar');
 						testQuantifier.renderReport('HorizontalBarLog10');
 
@@ -174,11 +213,54 @@ suite
 
 						var tmpOperationEndTime = +new Date();
 						var tmpOperationTime = tmpOperationEndTime - tmpOperationStartTime;
-						console.log('  > Statistics Generated in '+tmpOperationTime+'ms');
+						console.log('  > Data Inserted and Statistics Generated in '+tmpOperationTime+'ms');
 
+						testQuantifier.settings.ConsoleRendering.HeaderDescription = false;
 						//testQuantifier.renderReport('HorizontalBar');
 						testQuantifier.renderReport('HorizontalBarLog10');
 
+						Expect(testQuantifier.statistics.PushOperations)
+							.to.equal(1800000);
+					}
+				);
+
+
+				test
+				(
+					'generate a wide histogram',
+					function()
+					{
+						// This test can take a long time.  Give it at least 20 seconds.
+						this.timeout(20000);
+
+						var tmpOperationStartTime = +new Date();
+
+						var testQuantifier = libQuantifier.new();
+
+						testQuantifier.settings.ConsoleRendering.Height = 40;
+
+						testQuantifier.settings.Title = 'Wide Histogram 1';
+
+						var tmpBinMin = 1;
+						var tmpBinMax = 401;
+
+						for (var i = 0; i < 1000000; i++)
+							testQuantifier.addBin(Math.random() * (tmpBinMax - tmpBinMin) + tmpBinMin);
+						for (var i = 0; i < 500000; i++)
+							testQuantifier.addBin(Math.random() * (150 - 50) + 50);
+						for (var i = 0; i < 200000; i++)
+							testQuantifier.addBin(Math.random() * (110 - 80) + 80);
+						for (var i = 0; i < 100000; i++)
+							testQuantifier.addBin(Math.random() * (90 - 84) + 84);
+						testQuantifier.generateStatistics();
+
+						var tmpOperationEndTime = +new Date();
+						var tmpOperationTime = tmpOperationEndTime - tmpOperationStartTime;
+						console.log('  > Data Inserted and Statistics Generated in '+tmpOperationTime+'ms');
+
+						testQuantifier.settings.ConsoleRendering.HeaderDescription = false;
+						testQuantifier.renderReport('VerticalBar');
+						
 						Expect(testQuantifier.statistics.PushOperations)
 							.to.equal(1800000);
 					}

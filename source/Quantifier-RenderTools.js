@@ -4,6 +4,7 @@
 * @author <steven@velozo.com>
 */
 var libStream = require('stream');
+var libUnderscore = require('underscore');
 
 /**
 * Quantifier Console Rendering Tools
@@ -44,7 +45,7 @@ var QuantifierRenderTools = function()
 			{
 				_RenderSettings.Height = _RenderSettings.RenderStream.rows;
 			}
-
+			//console.log('RenderSettings: '+_RenderSettings.Width+'x'+_RenderSettings.Height)
 		};
 
 
@@ -112,7 +113,7 @@ var QuantifierRenderTools = function()
 			{
 				writeReportLine('# '+pQuantifier.settings.Title);
 				writeReportLine('');
-				if (pQuantifier.settings.Description)
+				if (_RenderSettings.HeaderDescription && pQuantifier.settings.Description)
 				{
 					writeReportLine(pQuantifier.settings.Description);
 					writeReportLine('');

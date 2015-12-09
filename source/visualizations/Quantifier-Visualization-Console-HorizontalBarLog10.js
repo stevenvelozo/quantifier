@@ -31,7 +31,7 @@ var renderConsoleHorizontalBar = function(pQuantifier)
 	var tmpWidth = pQuantifier.settings.ConsoleRendering.Width - 25;
 
 	// Generate the ascii sprite used to render each bar
-	_BarGraphicCache = "#".repeat(tmpWidth)+'|';
+	_BarGraphicCache = pQuantifier.settings.ConsoleRendering.HistogramFull.repeat(tmpWidth)+pQuantifier.settings.ConsoleRendering.HistogramCap;
 
 	pQuantifier.renderingTools.renderReportHeader('Horizontal Bar Log10');
 

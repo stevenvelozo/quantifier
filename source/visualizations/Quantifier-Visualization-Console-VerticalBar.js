@@ -21,40 +21,53 @@ var renderConsoleHorizontalBar = function(pQuantifier)
 	var tmpWidth = pQuantifier.settings.ConsoleRendering.Width - 10;
 	var tmpHeight = pQuantifier.settings.ConsoleRendering.Height - 12;
 
+	var tmpQuantizedSet;
+	if (tmpWidth < pQuantifier.statistics.Size)
+	{
+		tmpQuantizedSet = pQuantifier.quantizeLargestPossibleEvenSet(tmpWidth);
+	}
+	else
+	{
+		tmpQuantizedSet = pQuantifier.quantizeLargestPossibleEvenSet(pQuantifier.statistics.Size);
+	}
+
 	// Get the top point for each bar
 	var tmpBarTops = [];
-	for (var i = pQuantifier.statistics.Minimum; i <= pQuantifier.statistics.Maximum; i++)
+	for (var i = tmpQuantizedSet.statistics.Minimum; i <= tmpQuantizedSet.statistics.Maximum; i++)
 	{
-		var tmpBinAmount = (pQuantifier.statistics.ProcessedBins[i] == null) ? 0 : pQuantifier.statistics.ProcessedBins[i];
-		tmpBarTops[i] = getBarTop(i, tmpBinAmount, pQuantifier.statistics.BinMaximum, tmpHeight);
+		var tmpBinAmount = (tmpQuantizedSet.statistics.ProcessedBins[i] == null) ? 0 : tmpQuantizedSet.statistics.ProcessedBins[i];
+		tmpBarTops[i] = getBarTop(i, tmpBinAmount, tmpQuantizedSet.statistics.BinMaximum, tmpHeight);
 	}
 
 	pQuantifier.renderingTools.renderReportHeader('Vertical Bar');
 
+	// Only separate the bars if there is room.
+	var tmpBarSeparation = (tmpQuantizedSet.statistics.Size >= (tmpWidth/2)) ? '' : ' ';
+
 	// Now render the grid, line by line.
 	for (var y = tmpHeight; y > 0; y--)
 	{
-		for (var x = pQuantifier.statistics.Minimum; x <= pQuantifier.statistics.Maximum; x++)
+		for (var x = tmpQuantizedSet.statistics.Minimum; x <= tmpQuantizedSet.statistics.Maximum; x++)
 		{
 			// Show a space between each bar
-			if (x > pQuantifier.statistics.Minimum)
+			if (x > tmpQuantizedSet.statistics.Minimum)
 			{
-				pQuantifier.renderingTools.writeReportString(' ');
+				pQuantifier.renderingTools.writeReportString(tmpBarSeparation);
 			}
 
 			if (y == tmpBarTops[x])
 			{
 				// If the bar top is rendered, render it.
-				pQuantifier.renderingTools.writeReportString('-');
+				pQuantifier.renderingTools.writeReportString(tmpQuantizedSet.settings.ConsoleRendering.HistogramCap);
 			}
 			else if (y < tmpBarTops[x])
 			{
 				// If the bar top is rendered, render it.
-				pQuantifier.renderingTools.writeReportString('#');
+				pQuantifier.renderingTools.writeReportString(tmpQuantizedSet.settings.ConsoleRendering.HistogramFull);
 			}
 			else
 			{
-				pQuantifier.renderingTools.writeReportString(':');
+				pQuantifier.renderingTools.writeReportString(tmpQuantizedSet.settings.ConsoleRendering.HistogramEmpty);
 			}
 		}
 		pQuantifier.renderingTools.writeReportLine('');
