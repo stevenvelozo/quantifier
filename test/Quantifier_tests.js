@@ -101,7 +101,7 @@ suite
 						testQuantifier.generateStatistics();
 
 						testQuantifier.renderReport('HorizontalBar');
-						testQuantifier.renderReport('HorizontalBarLog10');
+						testQuantifier.renderReport('VerticalBar');
 					}
 				);
 
@@ -110,6 +110,9 @@ suite
 					'generate a complex larger histogram',
 					function()
 					{
+						// This test can take a long time.  Give it at least 20 seconds.
+						this.timeout(20000);
+
 						var tmpOperationStartTime = +new Date();
 
 						var testQuantifier = libQuantifier.new();
@@ -154,7 +157,7 @@ suite
 						var testQuantifier = libQuantifier.new();
 						testQuantifier.settings.MathMode.ArbitraryPrecision = true;
 						testQuantifier.settings.Title = 'Larger Histogram 3';
-						testQuantifier.settings.Description = 'Using arbitrary precision ... Add a large number of values to a 1...25 histogram to exercise basic scalability.';
+						testQuantifier.settings.Description = 'Using arbitrary precision ... Add a large number of values to a 1...25 histogram to exercise basic scalability.  Although this uses the same algorithm as the previous test to generate the curve, because it has a different rounding mechanism it is not shaped the same.';
 
 						var tmpBinMin = 1;
 						var tmpBinMax = 25;

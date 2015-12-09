@@ -29,21 +29,33 @@ var QuantifierRenderTools = function()
 			}
 			else
 			{
+				// Set the render stream to stdout
 				_RenderSettings.RenderStream = process.stdout;
 			}
 
 			// Now use the stream to determine the width of the renderable area
-			if (!_RenderSettings.Width || _RenderSettings.Width > _RenderSettings.RenderStream.columns)
+			if (!_RenderSettings.CustomSize && !_RenderSettings.Width || _RenderSettings.Width > _RenderSettings.RenderStream.columns)
 			{
 				_RenderSettings.Width = _RenderSettings.RenderStream.columns;
 			}
 
 			// Now use the stream to determine the width of the renderable area
-			if (!_RenderSettings.Height || _RenderSettings.Height > _RenderSettings.RenderStream.rows)
+			if (!_RenderSettings.CustomSize && !_RenderSettings.Height || _RenderSettings.Height > _RenderSettings.RenderStream.rows)
 			{
 				_RenderSettings.Height = _RenderSettings.RenderStream.rows;
 			}
 
+		};
+
+
+		// Hard-define the render size
+		var setRenderSize = function(pWidth, pHeight)
+		{
+			// TODO: Validate width and height
+			_RenderSettings.Height = parseInt(pHeight);
+			_RenderSettings.Width = parseInt(pWidth);
+
+			_RenderSettings.CustomSize = true;
 		};
 
 
@@ -86,6 +98,12 @@ var QuantifierRenderTools = function()
 			_RenderSettings.RenderStream.write(pReportLine+"\n");
 		};
 
+		// Write a string out to the report stream
+		var writeReportString = function(pReportString)
+		{
+			_RenderSettings.RenderStream.write(pReportString);
+		};
+
 
 		// Render a report header
 		var renderReportHeader = function(pReportName)
@@ -125,6 +143,7 @@ var QuantifierRenderTools = function()
 			renderReportFooter: renderReportFooter,
 
 			writeReportLine: writeReportLine,
+			writeReportString: writeReportString,
 
 			new: createNew
 		});

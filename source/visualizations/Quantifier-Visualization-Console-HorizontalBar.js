@@ -19,7 +19,7 @@ var generateBar = function(pValue, pAmount, pMax, pWidth)
 		tmpBarRenderAmount = pAmount / (pMax / pWidth);
 	}
 
-	if (parseInt(tmpBarRenderAmount) == 0)
+	if ((typeof(pAmount) === 'undefined') || (parseInt(tmpBarRenderAmount) == 0))
 	{
 		return tmpBar = ('     '+pValue).slice(-5)+' |';
 	}
@@ -42,8 +42,6 @@ var renderConsoleHorizontalBar = function(pQuantifier)
 
 	pQuantifier.renderingTools.renderReportHeader('Horizontal Bar');
 	
-	console.log(JSON.stringify(pQuantifier.bins));
-
 	for (var i = pQuantifier.statistics.Minimum; i <= pQuantifier.statistics.Maximum; i++)
 	{
 		//console.log(i+' >>> ' + typeof(pQuantifier.statistics.ProcessedBins[i]) + ' ' + typeof(pQuantifier.bins[i]));
