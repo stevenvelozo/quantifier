@@ -1,0 +1,25 @@
+// Quantifier Climate example application
+// MIT License
+// steven velozo <steven@velozo.com>
+
+!Weather
+@IDWeather
+%GUIDWeather
+$Time 24
+$WeatherStation 32
+$WeatherStationName 200
+.Elevation 12,6
+.Latitude 11,8
+.Longitude 11,8
+$Time 48
+.CoolingDegreesNormal 10,5
+.HeatingDegreesNormal 10,5
+.Pressure 10,5
+.CloudCoverPercent 10,5
+.DewPoint 10,5
+.HeatIndex 10,5
+.Temperature 10,5
+.WindChill 10,5
+.WindSpeed 10,5
+.WindVector 10,5
+.WindVectorSpeed 10,5

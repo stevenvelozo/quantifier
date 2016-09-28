@@ -1,0 +1,166 @@
+{
+    "Tables": {
+        "Weather": {
+            "TableName": "Weather",
+            "Domain": "Default",
+            "Columns": [
+                {
+                    "Column": "IDWeather",
+                    "DataType": "ID"
+                },
+                {
+                    "Column": "GUIDWeather",
+                    "DataType": "GUID"
+                },
+                {
+                    "Column": "Time",
+                    "DataType": "String",
+                    "Size": "24"
+                },
+                {
+                    "Column": "WindSpeed",
+                    "DataType": "String",
+                    "Size": "12"
+                },
+                {
+                    "Column": "Temperature",
+                    "DataType": "String",
+                    "Size": "128"
+                },
+                {
+                    "Column": "Title",
+                    "DataType": "String",
+                    "Size": "200"
+                }
+            ]
+        }
+    },
+    "TablesSequence": [
+        "Weather"
+    ],
+    "Authorization": {
+        "Weather": {
+            "__DefaultAPISecurity": {
+                "Create": "Deny",
+                "Read": "Deny",
+                "Reads": "Deny",
+                "ReadsBy": "Deny",
+                "ReadMax": "Deny",
+                "ReadSelectList": "Deny",
+                "Update": "Deny",
+                "Delete": "Deny",
+                "Count": "Deny",
+                "CountBy": "Deny",
+                "Schema": "Deny",
+                "Validate": "Deny",
+                "New": "Deny"
+            },
+            "Unauthenticated": {
+                "Create": "Deny",
+                "Read": "Deny",
+                "Reads": "Deny",
+                "ReadsBy": "Deny",
+                "ReadMax": "Deny",
+                "ReadSelectList": "Deny",
+                "Update": "Deny",
+                "Delete": "Deny",
+                "Count": "Deny",
+                "CountBy": "Deny",
+                "Schema": "Deny",
+                "Validate": "Deny",
+                "New": "Deny"
+            },
+            "User": {
+                "Create": "Allow",
+                "Read": "MyCustomer",
+                "Reads": "MyCustomer",
+                "ReadsBy": "MyCustomer",
+                "ReadMax": "MyCustomer",
+                "ReadSelectList": "MyCustomer",
+                "Update": "Mine",
+                "Delete": "Mine",
+                "Count": "MyCustomer",
+                "CountBy": "MyCustomer",
+                "Schema": "MyCustomer",
+                "Validate": "MyCustomer",
+                "New": "MyCustomer"
+            },
+            "Manager": {
+                "Create": "Allow",
+                "Read": "MyCustomer",
+                "Reads": "MyCustomer",
+                "ReadsBy": "MyCustomer",
+                "ReadMax": "MyCustomer",
+                "ReadSelectList": "MyCustomer",
+                "Update": "Mine",
+                "Delete": "Mine",
+                "Count": "MyCustomer",
+                "CountBy": "MyCustomer",
+                "Schema": "MyCustomer",
+                "Validate": "MyCustomer",
+                "New": "MyCustomer"
+            },
+            "Director": {
+                "Create": "Allow",
+                "Read": "MyCustomer",
+                "Reads": "MyCustomer",
+                "ReadsBy": "MyCustomer",
+                "ReadMax": "MyCustomer",
+                "ReadSelectList": "MyCustomer",
+                "Update": "MyCustomer",
+                "Delete": "MyCustomer",
+                "Count": "MyCustomer",
+                "CountBy": "MyCustomer",
+                "Schema": "MyCustomer",
+                "Validate": "MyCustomer",
+                "New": "MyCustomer"
+            },
+            "Executive": {
+                "Create": "Allow",
+                "Read": "MyCustomer",
+                "Reads": "MyCustomer",
+                "ReadsBy": "MyCustomer",
+                "ReadMax": "MyCustomer",
+                "ReadSelectList": "MyCustomer",
+                "Update": "MyCustomer",
+                "Delete": "MyCustomer",
+                "Count": "MyCustomer",
+                "CountBy": "MyCustomer",
+                "Schema": "MyCustomer",
+                "Validate": "MyCustomer",
+                "New": "MyCustomer"
+            },
+            "Administrator": {
+                "Create": "Allow",
+                "Read": "Allow",
+                "Reads": "Allow",
+                "ReadsBy": "Allow",
+                "ReadMax": "Allow",
+                "ReadSelectList": "Allow",
+                "Update": "Allow",
+                "Delete": "Allow",
+                "Count": "Allow",
+                "CountBy": "Allow",
+                "Schema": "Allow",
+                "Validate": "Allow",
+                "New": "Allow"
+            }
+        }
+    },
+    "Endpoints": {
+        "Create": true,
+        "Read": true,
+        "Reads": true,
+        "ReadsBy": true,
+        "ReadMax": true,
+        "ReadSelectList": true,
+        "Update": true,
+        "Delete": true,
+        "Count": true,
+        "CountBy": true,
+        "Schema": true,
+        "Validate": true,
+        "New": true
+    },
+    "Pict": {}
+}

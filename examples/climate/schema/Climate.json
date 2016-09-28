@@ -1,0 +1,38 @@
+{
+    "Tables": {
+        "Weather": {
+            "TableName": "Weather",
+            "Domain": "Default",
+            "Columns": [
+                {
+                    "Column": "IDWeather",
+                    "DataType": "ID"
+                },
+                {
+                    "Column": "GUIDWeather",
+                    "DataType": "GUID"
+                },
+                {
+                    "Column": "Time",
+                    "DataType": "String",
+                    "Size": "24"
+                },
+                {
+                    "Column": "WindSpeed",
+                    "DataType": "String",
+                    "Size": "12"
+                },
+                {
+                    "Column": "Temperature",
+                    "DataType": "String",
+                    "Size": "128"
+                },
+                {
+                    "Column": "Title",
+                    "DataType": "String",
+                    "Size": "200"
+                }
+            ]
+        }
+    }
+}
