@@ -149,7 +149,7 @@ suite
 					function()
 					{
 						// This test can take a long time.  Give it at least 20 seconds.
-						this.timeout(20000);
+						this.timeout(40000);
 
 						var tmpOperationStartTime = +new Date();
 
@@ -189,7 +189,7 @@ suite
 					function()
 					{
 						// This test can take a long time.  Give it at least 20 seconds.
-						this.timeout(20000);
+						this.timeout(40000);
 
 						var tmpOperationStartTime = +new Date();
 
@@ -231,7 +231,7 @@ suite
 					function()
 					{
 						// This test can take a long time.  Give it at least 20 seconds.
-						this.timeout(20000);
+						this.timeout(40000);
 
 						var tmpOperationStartTime = +new Date();
 

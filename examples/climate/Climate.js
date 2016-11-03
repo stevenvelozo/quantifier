@@ -77,6 +77,7 @@ _ClimateModel.load(() =>
 				histogramsRenderHorizontal('WindSpeed');
 				histogramsRenderHorizontal('WindVector');
 				// Wait for a key to continue
+				console.log('...press any key to exit...');
 				process.stdin.setRawMode(true);
 				process.stdin.resume();
 				process.stdin.on('data', process.exit.bind(process, 0));
