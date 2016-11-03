@@ -1,3 +1,11 @@
+/**
+* Climate Settings
+*
+* @license MIT
+*
+* @author Steven Velozo <steven@velozo.com>
+*/
+
 module.exports = (
 {
 	LogStreams:

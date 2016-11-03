@@ -1,3 +1,11 @@
+/**
+* Climate Histogram test app.
+*
+* @license MIT
+*
+* @author Steven Velozo <steven@velozo.com>
+*/
+
 var _SettingsDefaults = require('./Climate-Settings.js');
 var modulePath = (pModuleName)=>{ return `${_SettingsDefaults.NodeModuleRoot}${pModuleName}`; };
 // The dependency libraries for loading data, logging, etc.
@@ -29,7 +37,7 @@ var histogramsAdd = (pVariable, pTitle) =>
 // Bin values in the histograms
 var histogramsBin = (pRecord) =>
 {
-	for (tmpProperty in _Histograms)
+	for (var tmpProperty in _Histograms)
 	{
 		_Histograms[tmpProperty].addBin(pRecord[tmpProperty]);
 	}
@@ -37,13 +45,13 @@ var histogramsBin = (pRecord) =>
 // Generate statistics for each histogram
 var histogramsGenerateStatistics = () =>
 {
-	for (tmpProperty in _Histograms)
+	for (var tmpProperty in _Histograms)
 		_Histograms[tmpProperty].generateStatistics();
-}
+};
 var histogramsRenderHorizontal = (pVariable) =>
 {
 	_Histograms[pVariable].renderReport('HorizontalBar');
-}
+};
 
 histogramsAdd('Pressure');
 histogramsAdd('HeatIndex', 'Heat Index');
