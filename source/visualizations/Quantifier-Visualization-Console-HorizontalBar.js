@@ -18,12 +18,12 @@ var generateBar = function(pValue, pAmount, pMax, pWidth)
 		tmpBarRenderAmount = pAmount / (pMax / pWidth);
 	}
 
-	if ((typeof(pAmount) === 'undefined') || (parseInt(tmpBarRenderAmount) == 0))
+	if ((typeof(pAmount) === 'undefined') || (parseInt(tmpBarRenderAmount,10) === 0))
 	{
-		return tmpBar = ('     '+pValue).slice(-5)+' |';
+		return ('     '+pValue).slice(-5)+' |';
 	}
 
-	return tmpBar = ('     '+pValue).slice(-5)+' |'+_BarGraphicCache.slice(-tmpBarRenderAmount)+'   < '+pAmount;
+	return ('     '+pValue).slice(-5)+' |'+_BarGraphicCache.slice(-tmpBarRenderAmount)+'   < '+pAmount;
 };
 
 var renderConsoleHorizontalBar = function(pQuantifier)
@@ -43,9 +43,7 @@ var renderConsoleHorizontalBar = function(pQuantifier)
 	
 	for (var i = pQuantifier.statistics.Minimum; i <= pQuantifier.statistics.Maximum; i++)
 	{
-		//console.log(i+' >>> ' + typeof(pQuantifier.statistics.ProcessedBins[i]) + ' ' + typeof(pQuantifier.bins[i]));
-		var tmpBinAmount = (pQuantifier.statistics.ProcessedBins[i] === null) ? 0 : pQuantifier.statistics.ProcessedBins[i];
-		pQuantifier.renderingTools.writeReportLine(generateBar(i, tmpBinAmount, pQuantifier.statistics.BinMaximum, tmpWidth));
+		pQuantifier.renderingTools.writeReportLine(generateBar(i, (pQuantifier.statistics.ProcessedBins[i] === null) ? 0 : pQuantifier.statistics.ProcessedBins[i], pQuantifier.statistics.BinMaximum, tmpWidth));
 	}
 
 	pQuantifier.renderingTools.renderReportFooter('Horizontal Bar');

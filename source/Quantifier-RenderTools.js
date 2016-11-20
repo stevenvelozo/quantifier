@@ -52,8 +52,8 @@ var QuantifierRenderTools = function()
 		var setRenderSize = function(pWidth, pHeight)
 		{
 			// TODO: Validate width and height
-			_RenderSettings.Height = parseInt(pHeight);
-			_RenderSettings.Width = parseInt(pWidth);
+			_RenderSettings.Height = parseInt(pHeight,10);
+			_RenderSettings.Width = parseInt(pWidth,10);
 
 			_RenderSettings.CustomSize = true;
 		};

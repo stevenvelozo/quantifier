@@ -16,12 +16,12 @@ var generateBar = function(pValue, pAmount, pMax, pWidth)
 	var tmpBarRenderAmount = (pAmount === 0) ? 0 : Math.log(pAmount) / (Math.log(pMax) / pWidth);
 
 	// If the value equates to 0, just show an empty bar.
-	if (parseInt(tmpBarRenderAmount) == 0)
+	if (parseInt(tmpBarRenderAmount,10) === 0)
 	{
-		return tmpBar = ('     '+pValue).slice(-5)+' |';
+		return ('     '+pValue).slice(-5)+' |';
 	}
 
-	return tmpBar = ('     '+pValue).slice(-5)+' |'+_BarGraphicCache.slice(-tmpBarRenderAmount)+'   < '+pAmount;
+	return ('     '+pValue).slice(-5)+' |'+_BarGraphicCache.slice(-tmpBarRenderAmount)+'   < '+pAmount;
 };
 
 var renderConsoleHorizontalBar = function(pQuantifier)
@@ -36,8 +36,7 @@ var renderConsoleHorizontalBar = function(pQuantifier)
 
 	for (var i = pQuantifier.statistics.Minimum; i <= pQuantifier.statistics.Maximum; i++)
 	{
-		var tmpBinAmount = (pQuantifier.statistics.ProcessedBins[i] == null) ? 0 : pQuantifier.statistics.ProcessedBins[i];
-		pQuantifier.renderingTools.writeReportLine(generateBar(i, tmpBinAmount, pQuantifier.statistics.BinMaximum, tmpWidth));
+		pQuantifier.renderingTools.writeReportLine(generateBar(i, (pQuantifier.statistics.ProcessedBins[i] === null) ? 0 : pQuantifier.statistics.ProcessedBins[i], pQuantifier.statistics.BinMaximum, tmpWidth));
 	}
 
 	pQuantifier.renderingTools.renderReportFooter('Horizontal Bar Log10');

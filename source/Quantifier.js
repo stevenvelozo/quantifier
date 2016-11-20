@@ -59,7 +59,7 @@ var Quantifier = function()
 		var _RenderingTools = false;
 
 		// Setup the Math functions and other behaviors
-		var initialize = function(pBin, pBinAmount)
+		var initialize = (pBin, pBinAmount) =>
 		{
 			if (!_Settings.MathMode.ArbitraryPrecision)
 			{
@@ -75,7 +75,7 @@ var Quantifier = function()
 		};
 
 		// This only gets called the first time we call addBin, to laziliy initialize the dynamic functionality
-		var addBin = function(pBin, pBinAmount)
+		var addBin = (pBin, pBinAmount) =>
 		{
 			// Because the binning method hasn't been initialized yet, we need to init it now.
 			initialize(pBin, pBinAmount);
@@ -83,7 +83,7 @@ var Quantifier = function()
 		};
 
 		// Update Various Statistics on a Bin Push Operation
-		var updateLiveStatistics = function(pBin)
+		var updateLiveStatistics = (pBin) =>
 		{
 			_Statistics.PushOperations++;
 
@@ -98,7 +98,7 @@ var Quantifier = function()
 		};
 
 		// Add to a Bin in the set using native Javascript math
-		var addBinNativeMath = function(pBin, pBinAmount)
+		var addBinNativeMath = (pBin, pBinAmount) =>
 		{
 			var tmpBin = false;
 
@@ -106,12 +106,12 @@ var Quantifier = function()
 			if (!_Settings.MathMode.Standard.Rounding)
 			{
 				// Don't round at all.  Naively parse the int
-				tmpBin = parseInt(pBin);
+				tmpBin = parseInt(pBin, 10);
 			}
 			else
 			{
 				// Use Math.round
-				tmpBin = Math.round(pBin);
+				tmpBin = Math.round(pBin, 10);
 			}
 
 			// Get the bin amount
@@ -132,7 +132,7 @@ var Quantifier = function()
 
 
 		// Add to a Bin in the set using native Javascript math
-		var addBinArbitraryPrecisionMath = function(pBin, pBinAmount)
+		var addBinArbitraryPrecisionMath = (pBin, pBinAmount) =>
 		{
 			// Bins are still integers, so round after loading
 			var tmpBin = new libBigNumber(pBin).round().toNumber();
@@ -151,11 +151,11 @@ var Quantifier = function()
 			_Bins[tmpBin] = _Bins[tmpBin].plus(tmpBinAmount);
 
 			return tmpNewQuantifierObject;
-		}
+		};
 
 
 		// Generates statistics about the entire set
-		var generateStatistics = function()
+		var generateStatistics = () =>
 		{
 			if (_Statistics.PushOperationsAtStatisticsGeneration >= _Statistics.PushOperations)
 			{
@@ -189,7 +189,7 @@ var Quantifier = function()
 			for (var i = _Statistics.Minimum; i <= _Statistics.Maximum; i++)
 			{
 				// If this is out of scope, just put a 0 in.
-				if ((_Bins[i] == undefined) || (_Bins[i] == null))
+				if ((_Bins[i] === undefined) || (_Bins[i] === null))
 				{
 					_Statistics.ProcessedBins[i] = 0;
 					continue;					
@@ -231,7 +231,7 @@ var Quantifier = function()
 
 
 		// Recursive Greatest Common Factor
-		function greatestCommonFactor(pDivisor, pDivisee)
+		var greatestCommonFactor = (pDivisor, pDivisee) =>
 		{
 			if (pDivisee)
 			{
@@ -246,12 +246,12 @@ var Quantifier = function()
 
 
 		// Quantize the current histogram into a new histogram of a different size.
-		function quantize(pSetSize)
+		var quantize = (pSetSize) =>
 		{
 			generateStatistics();
 
 			// If the sizes match, return this histogram.
-			if (pSetSize == _Statistics.Size)
+			if (pSetSize === _Statistics.Size)
 				return tmpNewQuantifierObject;
 
 			// Create a histogram to stuff these values into
@@ -271,7 +271,7 @@ var Quantifier = function()
 		};
 
 
-		function quantizeLargestPossibleEvenSet(pSetMaxSize)
+		var quantizeLargestPossibleEvenSet = (pSetMaxSize) =>
 		{
 			generateStatistics();
 
