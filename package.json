@@ -1,13 +1,35 @@
 {
   "name": "quantifier",
-  "version": "1.0.4",
+  "version": "2.0.0",
   "description": "Histogram Quantization Library",
   "main": "source/Quantifier.js",
   "scripts": {
-    "coverage": "./node_modules/istanbul/lib/cli.js cover ./node_modules/mocha/bin/_mocha -- -u tdd -R spec",
-    "test": "./node_modules/mocha/bin/_mocha -u tdd -R spec",
+    "start": "node source/Quantifier.js",
+    "coverage": "./node_modules/.bin/nyc --reporter=lcov --reporter=text-lcov ./node_modules/mocha/bin/_mocha -- -u tdd -R spec",
+    "test": "./node_modules/.bin/mocha --exit -u tdd -R spec",
+    "tests": "./node_modules/.bin/mocha -u tdd --exit -R spec --grep",
+    "build": "./node_modules/.bin/gulp build",
+    "harness": "./debug/Harness.js",
     "doc": "./node_modules/groc/bin/groc --index-page-title Overview ./README.md ./source/**/*.js ./source/*.js",
     "doc-stage-retold": "./node_modules/groc/bin/groc --index-page-title Overview -o ../retold/fable ./README.md ./source/**/*.js"
+  },
+  "mocha": {
+    "diff": true,
+    "extension": [
+      "js"
+    ],
+    "package": "./package.json",
+    "reporter": "spec",
+    "slow": "75",
+    "timeout": "5000",
+    "ui": "tdd",
+    "watch-files": [
+      "source/**/*.js",
+      "test/**/*.js"
+    ],
+    "watch-ignore": [
+      "lib/vendor"
+    ]
   },
   "repository": {
     "type": "git",
@@ -23,21 +45,19 @@
   },
   "homepage": "https://github.com/stevenvelozo/quantifier#readme",
   "devDependencies": {
-    "chai": "2.0.0",
-    "codeclimate-test-reporter": "0.0.4",
-    "coveralls": "^2.11.2",
-    "csv-parse": "^1.1.7",
-    "fable": "^1.0.1",
-    "istanbul": "0.3.5",
-    "line-by-line": "^0.1.5",
-    "meadow": "^1.0.19",
-    "mocha": "2.1.0",
-    "retold": "^1.0.5",
-    "stricture": "^1.0.22"
+    "browserify": "^17.0.0",
+    "chai": "4.3.7",
+    "gulp": "^4.0.2",
+    "gulp-babel": "^8.0.0",
+    "gulp-sourcemaps": "^3.0.0",
+    "gulp-terser": "^2.1.0",
+    "gulp-util": "^3.0.8",
+    "mocha": "10.2.0",
+    "nyc": "^15.1.0",
+    "vinyl-buffer": "^1.0.1",
+    "vinyl-source-stream": "^2.0.0"
   },
   "dependencies": {
-    "bignumber.js": "^2.1.0",
-    "blessed": "^0.1.81",
-    "underscore": "^1.8.3"
+    "bignumber.js": "^9.1.1"
   }
 }
